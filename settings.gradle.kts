@@ -1,6 +1,14 @@
-/*
- Copyright © 2025 Petr Panteleyev <petr@panteleyev.org>
- SPDX-License-Identifier: BSD-2-Clause
- */
+// Copyright © 2025-2026 Petr Panteleyev
+// SPDX-License-Identifier: BSD-2-Clause
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("junit") {
+            var version = "6.0.3"
+            library("jupiter", "org.junit.jupiter:junit-jupiter:$version")
+            library("platform-launcher", "org.junit.platform:junit-platform-launcher:$version")
+        }
+    }
+}
 
 rootProject.name = "jlink-gradle-plugin"

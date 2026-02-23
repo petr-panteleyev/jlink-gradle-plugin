@@ -1,15 +1,10 @@
-/*
- Copyright © 2025 Petr Panteleyev <petr@panteleyev.org>
- SPDX-License-Identifier: BSD-2-Clause
- */
+// Copyright © 2025-2026 Petr Panteleyev
+// SPDX-License-Identifier: BSD-2-Clause
 group = "org.panteleyev"
-version = "1.0.0"
+version = "2.0.0"
 
 plugins {
-    java
-    `java-gradle-plugin`
-    `maven-publish`
-    id("com.gradle.plugin-publish") version "1.3.1"
+    id("com.gradle.plugin-publish") version "2.0.0"
 }
 
 repositories {
@@ -17,29 +12,29 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
+    testImplementation(junit.jupiter)
+    testRuntimeOnly(junit.platform.launcher)
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
 gradlePlugin {
-    val jlink by plugins.creating {
-        id = "org.panteleyev.jlinkplugin"
-        version = project.version
-        displayName = "JLink Gradle Plugin"
-        description = "A plugin that executes jlink tool from JDK"
-        implementationClass = "org.panteleyev.jlink.JLinkGradlePlugin"
-    }
-}
-
-pluginBundle {
     website = "https://github.com/petr-panteleyev/jlink-gradle-plugin"
     vcsUrl = "https://github.com/petr-panteleyev/jlink-gradle-plugin.git"
-    tags = listOf("jlink")
+    plugins {
+        register("jlinkplugin"){
+            id = "org.panteleyev.jlinkplugin"
+            version = project.version
+            displayName = "JLink Gradle Plugin"
+            description = "A plugin that executes jlink tool from JDK"
+            implementationClass = "org.panteleyev.jlink.JLinkGradlePlugin"
+            tags = listOf("jlink")
+        }
+    }
 }
 
 tasks.withType<Test> {

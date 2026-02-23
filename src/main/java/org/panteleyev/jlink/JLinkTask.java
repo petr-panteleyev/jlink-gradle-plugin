@@ -1,7 +1,5 @@
-/*
- Copyright © 2025 Petr Panteleyev <petr@panteleyev.org>
- SPDX-License-Identifier: BSD-2-Clause
- */
+// Copyright © 2025-2026 Petr Panteleyev
+// SPDX-License-Identifier: BSD-2-Clause
 package org.panteleyev.jlink;
 
 import org.gradle.api.DefaultTask;
@@ -12,7 +10,6 @@ import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Nested;
@@ -20,15 +17,12 @@ import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.jvm.toolchain.JavaToolchainService;
-import org.gradle.jvm.toolchain.JavaToolchainSpec;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.panteleyev.jlink.CommandLineParameter.ADD_MODULES;
@@ -57,9 +51,9 @@ public abstract class JLinkTask extends DefaultTask {
         dryRun = Boolean.getBoolean("jlink.dryRun");
 
         try {
-            JavaToolchainSpec toolchain = getProject().getExtensions()
+            var toolchain = getProject().getExtensions()
                     .getByType(JavaPluginExtension.class).getToolchain();
-            Provider<JavaLauncher> defaultLauncher = getJavaToolchainService().launcherFor(toolchain);
+            var defaultLauncher = getJavaToolchainService().launcherFor(toolchain);
             getJavaLauncher().convention(defaultLauncher);
         } catch (Exception ex) {
             getLogger().trace("Failed to configure JavaLauncher");
@@ -83,7 +77,6 @@ public abstract class JLinkTask extends DefaultTask {
     @Input
     @org.gradle.api.tasks.Optional
     public abstract Property<Boolean> getBindServices();
-//    DISABLE_PLUGIN("--disable-plugin"),
 
     @Input
     @org.gradle.api.tasks.Optional
@@ -134,7 +127,7 @@ public abstract class JLinkTask extends DefaultTask {
             getLogger().lifecycle("Executing jlink plugin in dry run mode");
         }
 
-        String jlink = getJLinkFromToolchain()
+        var jlink = getJLinkFromToolchain()
                 .orElseGet(() -> getJLinkFromJavaHome()
                         .orElseThrow(() -> new GradleException("Could not detect " + EXECUTABLE)));
 
@@ -142,7 +135,7 @@ public abstract class JLinkTask extends DefaultTask {
     }
 
     private Optional<String> buildExecutablePath(String home) {
-        String executable = home + File.separator + "bin" + File.separator + EXECUTABLE + (isWindows() ? ".exe" : "");
+        var executable = home + File.separator + "bin" + File.separator + EXECUTABLE + (isWindows() ? ".exe" : "");
         if (new File(executable).exists()) {
             return Optional.of(executable);
         } else {
@@ -154,11 +147,11 @@ public abstract class JLinkTask extends DefaultTask {
     private Optional<String> getJLinkFromToolchain() {
         getLogger().info("Looking for {} in toolchain", EXECUTABLE);
         try {
-            JavaLauncher launcherValue = getJavaLauncher().getOrNull();
+            var launcherValue = getJavaLauncher().getOrNull();
             if (launcherValue == null) {
                 throw new RuntimeException();
             } else {
-                String home = launcherValue.getMetadata().getInstallationPath().getAsFile().getAbsolutePath();
+                var home = launcherValue.getMetadata().getInstallationPath().getAsFile().getAbsolutePath();
                 getLogger().info("toolchain: {}", home);
                 return buildExecutablePath(home);
             }
@@ -170,7 +163,7 @@ public abstract class JLinkTask extends DefaultTask {
 
     private Optional<String> getJLinkFromJavaHome() {
         getLogger().info("Getting {} from java.home", EXECUTABLE);
-        String javaHome = System.getProperty("java.home");
+        var javaHome = System.getProperty("java.home");
         if (javaHome == null) {
             getLogger().error("java.home is not set");
             return Optional.empty();
@@ -187,7 +180,7 @@ public abstract class JLinkTask extends DefaultTask {
         parameters.addList(INCLUDE_LOCALES, getIncludeLocales());
         parameters.addList(LIMIT_MODULES, getLimitModules());
 
-        List<String> mPaths = new ArrayList<>();
+        var mPaths = new ArrayList<String>();
         getModulePaths().forEach(f -> mPaths.add(f.getAbsolutePath()));
         parameters.addString(MODULE_PATH, String.join(File.pathSeparator, mPaths));
 
@@ -199,15 +192,13 @@ public abstract class JLinkTask extends DefaultTask {
     }
 
     private void execute(String cmd) {
-        Parameters parameters = new Parameters(getLogger());
+        var parameters = new Parameters(getLogger());
         parameters.add(cmd.contains(" ") ? "\"" + cmd + "\"" : cmd);
         buildParameters(parameters);
 
-        if (dryRun) {
-            return;
-        }
+        if (dryRun) return;
 
-        Path outputPath = getOutput().getAsFile().get().toPath().toAbsolutePath();
+        var outputPath = getOutput().getAsFile().get().toPath().toAbsolutePath();
         if (!isNestedDirectory(getProjectLayout().getBuildDirectory().getAsFile().get().toPath(), outputPath)) {
             getLogger().error("Cannot remove output folder, must belong to {}",
                     getProjectLayout().getBuildDirectory().get());
@@ -217,16 +208,16 @@ public abstract class JLinkTask extends DefaultTask {
         }
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder();
+            var processBuilder = new ProcessBuilder();
 
-            Process process = processBuilder
+            var process = processBuilder
                     .redirectErrorStream(true)
                     .command(parameters.getParams())
                     .start();
 
             getLogger().info(EXECUTABLE + " output:");
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     getLogger().info(line);
