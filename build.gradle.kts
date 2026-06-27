@@ -1,10 +1,13 @@
 // Copyright © 2025-2026 Petr Panteleyev
 // SPDX-License-Identifier: BSD-2-Clause
+
+import org.gradle.plugin.compatibility.compatibility
+
 group = "org.panteleyev"
-version = "2.0.0"
+version = "2.0.1"
 
 plugins {
-    id("com.gradle.plugin-publish") version "2.0.0"
+    id("com.gradle.plugin-publish") version "2.1.1"
 }
 
 repositories {
@@ -33,6 +36,12 @@ gradlePlugin {
             description = "A plugin that executes jlink tool from JDK"
             implementationClass = "org.panteleyev.jlink.JLinkGradlePlugin"
             tags = listOf("jlink")
+
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

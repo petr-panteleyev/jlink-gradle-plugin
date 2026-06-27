@@ -3,7 +3,7 @@
 Gradle plugin for jlink.
 
 [![License](https://www.panteleyev.org/badges/license-bsd-2.svg)](LICENSE)
-[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/panteleyev/jlinkplugin/org.panteleyev.jlinkplugin.gradle.plugin/maven-metadata.xml.svg?label=Gradle%20Plugin)](https://plugins.gradle.org/plugin/org.panteleyev.jpackageplugin)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/panteleyev/jlinkplugin/org.panteleyev.jlinkplugin.gradle.plugin/maven-metadata.xml.svg?label=Gradle%20Plugin)](https://plugins.gradle.org/plugin/org.panteleyev.jlinkplugin)
 [![Gradle](https://img.shields.io/badge/Gradle-9.1.0%2B-green)](https://gradle.org/)
 [![JDK](https://www.panteleyev.org/badges/java-17.svg)](https://jdk.java.net/archive/)
 
